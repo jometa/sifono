@@ -43,5 +43,8 @@ def main():
 
 if __name__ == '__main__':
     results = main()
-    with open(os.path.join(os.getcwd(), 'fono', 'data', 'results.json'), mode='w') as f:
-        json.dump(results, f)
+    # with open(os.path.join(os.getcwd(), 'fono', 'data', 'results.json'), mode='w') as f:
+    #     json.dump(results, f)
+    client = pymongo.MongoClient()
+    db = client.fono
+    db.data.insert_many(results)
