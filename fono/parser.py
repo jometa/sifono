@@ -17,19 +17,20 @@ type_1 = re.compile(
 		'('
 			'([aiueo]|ai|au|ei|oi)'
 			'(?='
+				# Followed by any number of pair of CV or VC
+				# Just like cvvccv...
 				'('
-					# Followed by any number of pair of CV
 					'('
-						'kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz]'
-						'[aiueo]|ai|au|ei|oi'
+						'('
+							'(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])'
+							'([aiueo]|ai|au|ei|oi)'
+						')'
+						'|'
+						'('
+							'([aiueo]|ai|au|ei|oi)'
+							'(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])'
+						')'
 					')+'
-					'$'
-				')'
-				'|'
-				# Followed by any number of pair of VC
-				'('
-					'kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz]'
-					'[aiueo]|ai|au|ei|oi'
 				')'
 			')'
 		')'
@@ -90,21 +91,32 @@ type_3 = re.compile(
 
 # (C+VC+)V
 type_4 = re.compile(
-	'^'
-	'(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])+'
-	'([aiueo]|ai|au|ei|oi)'
-	'(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])'
-	'(?='
-		'('
-			'(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])+'
-			'([aiueo]|ai|au|ei|oi)'
-		')'
+	'('
+		'^'
+		'(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])+'
+		'([aiueo]|ai|au|ei|oi)'
+		'(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])+'
+		'$'
 		'|'
-		'('
-			'(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])*'
-			'$'
+		'^'
+		'(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])+'
+		'([aiueo]|ai|au|ei|oi)'
+		'(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])'
+		'(?='
+			'('
+				'('
+					'(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])+'
+					'([aiueo]|ai|au|ei|oi)'
+				')'
+				'|'
+				'('
+					'(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])*'
+					'$'
+				')'
+			')'
 		')'
-	')',
+	')'
+	,
 	re.X)
 
 special_type_1 = re.compile(
@@ -134,7 +146,7 @@ class Parser:
 			found = False
 			for idx, pattern in enumerate(patterns):
 				m = pattern.match(word)
-				breakpoint()
+				# breakpoint()
 				if m is not None:
 					start, end = m.span()
 					tokens.append(word[start:end])
@@ -162,7 +174,7 @@ def test_regex():
 			print(f'word={w}  match={rule.match(w)}')
 
 if __name__ == '__main__':
-	s = 'bueng'
+	s = 'homoterm'
 	parser = Parser()
 	parser.load()
 	result = parser.parse(s)

@@ -34,7 +34,8 @@ class TestParser(unittest.TestCase):
             ('api', ('a', 'pi')),
             ('itu', ('i', 'tu')),
             ('anda', ('an', 'da')),
-			('bueng', ('bu', 'eng'))
+			('bueng', ('bu', 'eng')),
+			('homoterm', ('ho', 'mo', 'term'))
 		)
 		
 		parser = Parser()

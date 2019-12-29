@@ -1,7 +1,9 @@
 import pickle
 import os
 import re
+import json
 from fono.parser import Parser
+import pymongo
 
 
 def main():
@@ -21,9 +23,9 @@ def main():
         for token in tokens:
             m = vocab.search(token)
             if m is None:
-                print(f'word = {word}')
-                print(f"tokens = {tokens}")
-                input()
+                # print(f'word = {word}')
+                # print(f"tokens = {tokens}")
+                # input()
                 continue
             
             nucleus_idx = m.start()
@@ -41,3 +43,5 @@ def main():
 
 if __name__ == '__main__':
     results = main()
+    with open(os.path.join(os.getcwd(), 'fono', 'data', 'results.json'), mode='w') as f:
+        json.dump(results, f)
