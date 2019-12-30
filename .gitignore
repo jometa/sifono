@@ -73,6 +73,6 @@ venv.bak/
 # Pyre type checker
 .pyre/
 
-docker/mongo-data
-docker/asshole
-fono/data/results.json
+docker/mongo-data/
+docker/asshole/
+fono/data/
