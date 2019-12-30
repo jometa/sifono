@@ -6,3 +6,5 @@ services:
     container_name: fono_mongo
     ports:
       - '27017:27017'
+    volumes:
+      - ./asshole:/asshole

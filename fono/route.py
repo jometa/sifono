@@ -4,6 +4,7 @@ from flask import (
     request,
     current_app
 )
+import pymongo
 from fono.mongo import mongo_db
 from fono.config import Encoder
 
@@ -11,11 +12,44 @@ from fono.config import Encoder
 bp = Blueprint("api", __name__, url_prefix="/api/v1")
 
 
-@bp.route('kata/<kata>', methods=['GET'])
-def get_kata(kata : str):
+@bp.route('kata-tokens/<kata>', methods=['GET'])
+def find_kata_tokens(kata : str):
     result = mongo_db.data.find_one({
         'word': kata
     })
+    resp = current_app.response_class(
+        response=json.dumps(result, cls=Encoder),
+        status=200,
+        mimetype='application/json'
+    )
+    return resp
+
+@bp.route('kata/<kata>', methods=['GET'])
+def find_kata(kata : str):
+    query_obj = {
+        'word': {
+            '$regex': '^' + kata + '.*'
+        }
+    }
+    projection_obj = {
+        'word': 1
+    }
+    result = list( mongo_db.data.find(query_obj, projection_obj).sort('word', pymongo.ASCENDING).limit(10) )
+    resp = current_app.response_class(
+        response=json.dumps(result, cls=Encoder),
+        status=200,
+        mimetype='application/json'
+    )
+    return resp
+
+
+@bp.route('chars', methods=['GET'])
+def chars():
+    tag = request.args.get('tag')
+    query = {
+        'tag': tag
+    }
+    result = list( mongo_db.counter.find(query).sort('char', pymongo.ASCENDING) )
     resp = current_app.response_class(
         response=json.dumps(result, cls=Encoder),
         status=200,

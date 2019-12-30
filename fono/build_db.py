@@ -41,10 +41,41 @@ def main():
         results.append(result)
     return results
 
+def split_char(s: str):
+    gab_kons = re.compile('^(kh|ng|ny|sy|[bcdfghjklmnpqrstvwxyz])')
+    v_pattern = re.compile('^[aiueo]')
+    patterns = [
+        (gab_kons, 'konsonan'), 
+        (v_pattern, 'vocal')
+    ]
+
+    word = s
+    result= []
+    while word != '':
+        for (pattern, tag)  in patterns:
+            is_match = pattern.match(word)
+            if is_match:
+                _, end = is_match.span()
+                match_w = is_match.group()
+                word = word[end:]
+                result.append((match_w, tag))
+    return result
+
 if __name__ == '__main__':
     results = main()
+    counters = {}
+    for data in results:
+        w = data['word']
+        for (char, tag) in split_char(w):
+            key = (char, tag)
+            if key not in counters:
+                counters[key] = 0
+            counters[key] += 1
+    vocal_counters = [ {'char': c, 'count': count, 'tag': tag } for ((c, tag), count) in counters.items() if tag == 'vocal']
+    kons_counters = [ {'char': c, 'count': count, 'tag': tag} for ((c, tag), count) in counters.items() if tag == 'konsonan']
+    data_counters = vocal_counters + kons_counters
     # with open(os.path.join(os.getcwd(), 'fono', 'data', 'results.json'), mode='w') as f:
     #     json.dump(results, f)
     client = pymongo.MongoClient()
     db = client.fono
-    db.data.insert_many(results)
+    db.counter.insert_many(data_counters)
