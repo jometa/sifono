@@ -75,4 +75,4 @@ venv.bak/
 
 docker/mongo-data/
 docker/asshole/
-fono/data/
+fono/data/*
